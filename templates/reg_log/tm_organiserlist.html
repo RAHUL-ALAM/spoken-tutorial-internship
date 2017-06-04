@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+
+<style type="text/css">
+	
+/*#state_filter, #institution_filter{
+	width: 25%;
+	height: 30px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}*/
+
+</style>
+
+
+
+
+<div style="width: 80%; margin-right: auto; margin-left: auto; margin-bottom: 20px;">
+<div style="width: 80%; margin-right: auto; margin-left: auto;">
+<form class="form-inline" onsubmit="return false;">
+{% csrf_token %}
+  <div class="form-group">
+    <label for="state">State:</label>
+    <select id="state" name="state-filter" class="form-control">
+    <option value="0">Choose State</option>
+    {% for i in states %}
+      <option id="os{{i.id}}" value="{{i.id}}" >{{i.name}}</option>
+    {% endfor %}
+    </select>
+  </div>
+  <div class="form-group" style="padding-left: 2.5%;">
+    <label for="college">College:</label>
+    <select id="institution_filter" name="insti-filter" class="form-control">
+    <option value="0">Choose Institution</option>
+    {% for i in colleges %}
+      <option id="oc{{i.state_id}}-{{i.id}}" value="{{i.id}}">{{i.clg_name}}</option>
+    {% endfor %}
+    </select>
+  </div>
+  <div class="form-group" style="padding-left: 2.5%;">
+  <button class="btn btn-primary" id="reset" >Reset Filter</button>
+  </div>
+</form>
+</div>
+</div>
+
+
+
+<div style="width: 80%; margin-right: auto; margin-left: auto; box-shadow: 1px 1px 4px #888888;">
+
+<ul class="nav nav-tabs">
+  <li id="newtab" class="active"><a href="/training-manager/organiser-list/new/">new requests</a></li>
+  <li id="currenttab"><a href="/training-manager/organiser-list/current/">current organisers</a></li>
+  <li id="rejectedtab"><a href="/training-manager/organiser-list/rejected/">rejected</a></li>
+</ul>
+
+<div id="new" style="width: 90%; margin-right: auto; margin-left: auto; padding-bottom: 5px;">
+	<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>College</th>
+        <th>State</th>
+        {% if status == 0 %}
+        <th>Action</th>
+        {% else %}
+        <th>Created/Updated</th>
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody id="table-data">
+    {% for i in organisers %}
+      <tr id="tr{{i.collage.state_id}}-{{i.collage.id}}">
+        <td>{{i.user.username}}</td>
+        <td>{{i.user.email}}</td>
+        <td id="tc{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage}}</td>
+        <td id="ts{{i.collage.state_id}}-{{i.collage.id}}" >{{i.collage.state}}</td>
+        {% if status == "new" %}
+        <td><a href="organiser-request/accept/{{i.user_id}}/">accept</a>&nbsp|&nbsp 
+        <a href="organiser-request/reject/{{i.user_id}}/">reject</a></td>
+        {% else %}
+        <td>{{i.updated}}</td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+	
+{% if status == "new" %}
+	document.getElementById('newtab').className = "active";
+{% else %}
+	document.getElementById('newtab').className = " ";
+{% endif %}
+{% if status == "current" %}
+	document.getElementById('currenttab').className = "active";
+{% else %}
+	document.getElementById('currenttab').className = " ";
+{% endif %}
+{% if status == "rejected" %}
+	document.getElementById('rejectedtab').className = "active";
+{% else %}
+	document.getElementById('rejectedtab').className = " ";
+{% endif %}
+
+</script>
+
+<script>
+	$(document).ready(function(){
+        $acstate = $('#state');
+        //$ac_district = $(".district");
+        $college = $("#institution_filter");
+        $table = $("#table-data");
+
+        $acstate.change(function() {
+            var state = $(this).val();
+            if(state){
+                $.ajax({
+                    url: "/training-manager/organiser-list/ajax-state-collage/{{status}}/",
+                    type: "POST",
+                    data: {
+                        state : state,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data.tmp1){
+                            $college.html(data.tmp1);
+                            // $college.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        } else{
+                            // $college.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No college found for this State!!');
+                        }
+                        if(data.tmp2){
+                            $table.html(data.tmp2);
+                            // $college.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        }
+                    }
+                });
+            }
+        });
+
+        $college.change(function() {
+            var clg = $(this).val();
+            if(clg){
+                $.ajax({
+                    url: "/training-manager/organiser-list/ajax-collage-show/{{status}}/",
+                    type: "POST",
+                    data: {
+                        college : clg,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                           $table.html(data);
+                        } else{
+                            // $college.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No college found for this State!!');
+                        }
+                    }
+                });
+            }
+        });
+
+        $button = $("#reset");
+        $button.click(function(){
+            $.ajax({
+                url: "/training-manager/organiser-list/reset/{{status}}/",
+                    type: "POST",
+                    data: {
+                        // college : clg,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                            $acstate.html(data.states);
+                            $college.html(data.colleges);
+                           $table.html(data.table);
+                        } else{
+                            // $college.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No college found for this State!!');
+                        }
+                    }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

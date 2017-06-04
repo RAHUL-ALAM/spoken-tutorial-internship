@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<div style="margin-top: 70px;"> 
+
+	<a href="/training-manager/organiser-list/0/" style="text-decoration: none;">
+
+	<div id="org" class="adder" style="width: 40%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px;">
+		<p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
+		 See Organiser List
+		</p>
+	</div>
+
+	</a>
+	
+	<a href="#" style="text-decoration: none;">
+
+	<div id="insti" class="adder" style="width: 40%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px;">
+		<p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
+		 Add Institution
+		</p>
+	</div>
+	</a>
+
+	<div id="addInstiform" class="modal">
+	<div class="modal-content">
+	  <span class="close">&times;</span>
+	  
+	  <form method="post">
+	  {% csrf_token %}
+	  <div class="form-group">
+	    <label for="email">College Name:</label>
+	    {{addInstiForm.clg_name}}
+	  </div>
+	  <div class="form-group">
+	    <label for="pwd">State:</label>
+	    {{addInstiForm.state}}
+	  </div>
+	  <div class="form-group">
+	    <label for="pwd">District:</label>
+	    {{addInstiForm.district}}
+	  </div>
+	  <div class="form-group">
+	    <label for="pwd">City:</label>
+	    {{addInstiForm.city}}
+	  </div>
+	  <div class="form-group">
+	    <label for="pwd">Address:</label>
+	    {{addInstiForm.address}}
+	  </div>
+	  <div class="form-group">
+	    <label for="pwd">Address:</label>
+	    {{addInstiForm.pincode}}
+	  </div>
+	  <div class="checkbox">
+	    <label>{{addInstiForm.status}} Status </label>
+	  </div>
+
+	  <button type="submit" class="btn btn-primary" style="margin-top: 2.5%;">Submit</button>
+	</form>
+	</div>
+	</div>
+
+	</div>
+
+
+
+
+	<style type="text/css">
+	
+	.modal{	
+		display: none; /* Hidden by default */
+	    position: fixed; /* Stay in place */
+	    z-index: 1; /* Sit on top */
+	    left: 0;
+	    top: 0;
+	    width: 100%; /* Full width */
+	    height: 100%; /* Full height */
+	    margin: 0 auto;
+	    overflow: auto; /* Enable scroll if needed */
+	    background-color: rgb(0,0,0); /* Fallback color */
+	    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+	/* Modal Content/Box */
+	.modal-content {
+	    background-color: #fefefe;
+	    margin: 15% auto; /* 15% from the top and centered */
+	    padding: 3%;
+	    border: 1px solid #888;
+	    width: 40%; /* Could be more or less, depending on screen size */
+	}
+
+	/* The Close Button */
+	.close {
+	    color: #aaa;
+	    float: right;
+	    font-size: 28px;
+	    font-weight: bold;
+	}
+
+	.close:hover,
+	.close:focus {
+	    color: black;
+	    text-decoration: none;
+	    cursor: pointer;
+	}
+	</style>
+
+
+
+
+
+
+
+
+	<script type="text/javascript">
+		
+		// Get the modal
+		var modal = document.getElementById('addInstiform');
+
+		// Get the button that opens the modal
+		var btn = document.getElementById("insti");
+
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
+
+		// When the user clicks on the button, open the modal 
+		btn.onclick = function() {
+		    modal.style.display = "block";
+		}
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function() {
+		    modal.style.display = "none";
+		}
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function(event) {
+		    if (event.target == modal) {
+		        modal.style.display = "none";
+		    }
+		}
+
+	</script>
+
+	<script>
+		$(document).ready(function(){
+	        $acstate = $('#state');
+	        //$ac_district = $(".district");
+	        $district = $("#district");
+	        
+	        $acstate.change(function() {
+	            var state = $(this).val();
+	            if(state){
+	                $.ajax({
+	                    url: "/ajax-state-district/",
+	                    type: "POST",
+	                    data: {
+	                        state : state,
+	                        csrfmiddlewaretoken: '{{ csrf_token }}'
+	                    },
+	                    // beforeSend: function() {
+	                    //     $('.ajax-refresh-institution').show();
+	                    // },
+	                    success: function(data) {
+	                        if(data){
+	                            $district.html(data);
+	                            $district.removeAttr("disabled");
+	                            // $('.ajax-refresh-institution').hide();
+	                        } else{
+	                            $district.attr("disabled", "disabled");
+	                            // $('.ajax-refresh-institution').hide();
+	                            alert('No district found for this state!!');
+	                        }
+	                    }
+	                });
+	            }
+	        });
+	        
+	</script>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style type="text/css">
+	
+#state_filter, #institution_filter{
+	width: 25%;
+	height: 30px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+</style>
+
+
+
+<!-- body id below -->
+
+<div style="width: 80%; margin-right: auto; margin-left: auto; margin-bottom: 20px;">
+<strong>Choose State:</strong>
+<select id="state_filter" style="margin-right: 2%;">
+<option value="-">Select State</option>
+{% for i in states %}
+  <option id="os{{i.id}}" value="{{i.id}}">{{i.name}}</option>
+{% endfor %}
+</select>
+<strong>Choose Institution:</strong>
+<select id="institution_filter" >
+<option value="-">Select Institution</option>
+{% for i in colleges %}
+  <option id="oc{{i.state_id}}-{{i.id}}" value="{{i.id}}" data-state-name="{{i.state.name}}">{{i.clg_name}}</option>
+{% endfor %}
+</select>
+<button class="btn btn-primary" style="margin-left: 1%;" id="reset"> Reset Filter</button>
+</div>
+<div style="width: 90%; margin-right: auto; margin-left: auto; box-shadow: 1px 1px 4px #888888;">
+<ul class="nav nav-tabs">
+  <li id="newtab" class="active"><a href="#">new requests</a></li>
+  <li id="currenttab"><a href="#">current organisers</a></li>
+  <li id="rejectedtab"><a href="#">rejected</a></li>
+</ul>
+<div id="new" style="width: 90%; margin-right: auto; margin-left: auto; padding-bottom: 5px;">
+	<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>College</th>
+        <th>State</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in new %}
+      <tr id="trn{{i.collage.state_id}}-{{i.collage.id}}">
+        <td>{{i.user.username}}</td>
+        <td>{{i.user.email}}</td>
+        <td id="tcn{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage}}</td>
+        <td id="tsn{{i.collage.state_id}}-{{i.collage.id}}" >{{i.collage.state}}</td>
+        <td><a href="organiser-request/accept/{{i.user_id}}/">accept</a>&nbsp|&nbsp <a href="organiser-request/reject/{{i.user_id}}/">reject</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
+<div id="current" style="width: 90%; margin-right: auto; margin-left: auto; display: none; padding-bottom: 5px;">
+	<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>College</th>
+        <th>State</th>
+        <th>Created</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in current %}
+      <tr id="trc{{i.collage.state_id}}-{{i.collage.id}}">
+        <td>{{i.user.username}}</td>
+        <td>{{i.user.email}}</td>
+        <td id="tcc{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage}}</td>
+        <td id="tsc{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage.state}}</td>
+        <td>{{i.created}}</td>
+      </tr>
+    {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+<div id="rejected" style="width: 90%; margin-right: auto; margin-left: auto; display: none; padding-bottom: 5px;">
+	<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>College</th>
+        <th>State</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in rejected %}
+      <tr id="trr{{i.collage.state_id}}-{{i.collage.id}}">
+        <td>{{i.user.username}}</td>
+        <td>{{i.user.email}}</td>
+        <td id="tcr{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage}}</td>
+        <td id="tsr{{i.collage.state_id}}-{{i.collage.id}}">{{i.collage.state}}</td>
+      </tr>
+    {% endfor %}
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+
+
+
+
+<!-- Javascript for this file -->
+
+<script type="text/javascript">
+
+
+	document.getElementById('state_filter').onchange = function () {
+
+		var state = document.getElementById('state_filter').options[document.getElementById('state_filter').selectedIndex].text;
+		document.getElementById('institution_filter').value = '-';
+
+		// from 125-144 line for new requests tab
+		{% for i in new %}
+			if(document.getElementById("tsn{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != state){
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+		{% endfor %}
+
+		{% for i in new %}
+			if(document.getElementById("tsn{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == state){
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(state=="Select State"){
+			// location.reload();
+			{% for i in new %}
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+				// document.getElementById("trc{{i.collage.state_id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+
+		// from 148-166 line for current requests tab
+		{% for i in current %}
+			if(document.getElementById("tsc{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != state){
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+		{% endfor %}
+
+		{% for i in current %}
+			if(document.getElementById("tsc{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == state){
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(state=="Select State"){
+			// location.reload();
+			{% for i in current %}
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+
+		// from 148-166 line for current requests tab
+		{% for i in rejected %}
+			if(document.getElementById("tsr{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != state){
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+		{% endfor %}
+
+		{% for i in rejected %}
+			if(document.getElementById("tsr{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == state){
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(state=="Select State"){
+			// location.reload();
+			{% for i in rejected %}
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+
+
+		{% for i in colleges %}
+			if(document.getElementById("oc{{i.state_id}}-{{i.id}}").getAttribute("data-state-name") != state){
+				document.getElementById("oc{{i.state_id}}-{{i.id}}").style.display = "none";
+			}
+			if(document.getElementById("oc{{i.state_id}}-{{i.id}}").getAttribute("data-state-name") == state){
+				document.getElementById("oc{{i.state_id}}-{{i.id}}").style.display = "block";
+			}
+		{% endfor  %}
+
+		if(state=="Select State"){
+			// location.reload();
+			{% for i in colleges %}
+				document.getElementById("oc{{i.state_id}}-{{i.id}}").style.display = "block";
+			{% endfor %}
+		}
+
+	}
+
+
+
+
+	document.getElementById('institution_filter').onchange = function () {
+		var insti = document.getElementById('institution_filter').options[document.getElementById('institution_filter').selectedIndex].text;
+
+
+		{% for i in new %}
+			if(document.getElementById("tcn{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != insti){
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+			if(document.getElementById("tcn{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == insti){
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(insti=="Select Institution"){
+			{% for i in new %}
+				document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+		{% for i in current %}
+			if(document.getElementById("tcc{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != insti){
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+			if(document.getElementById("tcc{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == insti){
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(insti=="Select Institution"){
+			{% for i in current %}
+				document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+		{% for i in rejected %}
+			if(document.getElementById("tcr{{i.collage.state_id}}-{{i.collage.id}}").innerHTML != insti){
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "none";
+			}
+			if(document.getElementById("tcr{{i.collage.state_id}}-{{i.collage.id}}").innerHTML == insti){
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			}
+		{% endfor %}
+
+		if(insti=="Select Institution"){
+			{% for i in rejected %}
+				document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+			{% endfor %}
+		}
+
+
+		if(insti=="Select Institution"){
+			{% for i in states %}
+				document.getElementById("os{{i.id}}").style.display = "block";
+			{% endfor %}
+		}
+
+
+		var state = document.getElementById('institution_filter').options[document.getElementById('institution_filter').selectedIndex].getAttribute("data-state-name");
+
+		{% for i in states %}
+
+			if(document.getElementById('os{{i.id}}').innerHTML != state){
+				document.getElementById('os{{i.id}}').style.display = "none";
+			}
+			if(document.getElementById('os{{i.id}}').innerHTML == state){
+				document.getElementById('os{{i.id}}').style.display = "block";
+			}
+
+		{% endfor %}
+	}
+
+
+
+
+
+	document.getElementById("reset").onclick = function () {
+		document.getElementById('state_filter').value='-';
+		document.getElementById('institution_filter').value='-';
+		{% for i in new %}
+			document.getElementById("trn{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+		{% endfor %}
+		{% for i in current %}
+			document.getElementById("trc{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+		{% endfor %}
+		{% for i in rejected %}
+			document.getElementById("trr{{i.collage.state_id}}-{{i.collage.id}}").style.display = "table-row";
+		{% endfor %}
+		{% for i in states %}
+			document.getElementById("os{{i.id}}").style.display = "block";
+		{% endfor %}
+		{% for i in colleges %}
+			document.getElementById("oc{{i.state_id}}-{{i.id}}").style.display = "block";
+		{% endfor %}
+	}
+
+
+
+
+
+	document.getElementById("newtab").onclick = function() {
+		document.getElementById("currenttab").className = " ";
+		document.getElementById("rejectedtab").className = " ";
+		document.getElementById("newtab").className = "active";
+
+		document.getElementById("current").style.display = "none";
+		document.getElementById("rejected").style.display = "none";
+		document.getElementById("new").style.display = "block";
+	}
+	document.getElementById("currenttab").onclick = function() {
+		document.getElementById("newtab").className = " ";
+		document.getElementById("rejectedtab").className = " ";
+		document.getElementById("currenttab").className = "active";
+
+		document.getElementById("new").style.display = "none";
+		document.getElementById("rejected").style.display = "none";
+		document.getElementById("current").style.display = "block";
+	}
+	document.getElementById("rejectedtab").onclick = function() {
+		document.getElementById("newtab").className = " ";
+		document.getElementById("currenttab").className = " ";
+		document.getElementById("rejectedtab").className = "active";
+
+		document.getElementById("new").style.display = "none";
+		document.getElementById("current").style.display = "none";
+		document.getElementById("rejected").style.display = "block";
+	}
+
+
+</script>
+
+
+{% endblock %}

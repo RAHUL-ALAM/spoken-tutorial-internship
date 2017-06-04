@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="logform">
+<div id="header" style="width: 80%; margin-left: auto;margin-right: auto; text-align: center;padding: 10px;">
+<p style="font-size: 25px; font-weight: bold;"> LogIn</p>
+</div>
+<p style="color: red; text-align: center;">{{err}}</p>
+<form class="form-horizontal" method="post" action="/login/">
+  {% csrf_token %}
+ 
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="fname">Username:</label>
+    <div class="col-sm-8">
+      {{ log_form.username }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="fname">Password:</label>
+    <div class="col-sm-8">
+      {{ log_form.password }}
+    </div>
+  </div>
+  <div class="form-group"> 
+    <div class="col-sm-offset-4 col-sm-8">
+      <button type="submit" class="btn btn-primary">log In</button>
+    </div>
+  </div>
+
+  <div id="footer" style="width: 80%; margin-left: auto;margin-right: auto; text-align: center;padding: 10px;padding-bottom: 3px;">
+  <p style="font-size: 10px; font-weight: bold;">
+    Don't have an account? <a href="/register">register here</a>
+  </p>
+  </div>
+  <div id="footer2" style="width: 80%; margin-left: auto;margin-right: auto; text-align: center;padding: 0px;">
+  <p style="font-size: 10px; font-weight: bold;">
+    <a href="#">Forgot your password?</a>
+  </p>
+  </div>
+
+</form>
+</div>
+<style type="text/css">
+
+	.logform{
+		background-color: #E5E1E0;
+		width:30%;
+		margin-right: auto;
+		margin-left: auto;
+		margin-top: 30px;
+		padding: 20px;
+	}
+	.logform button{
+		width:100%;
+	}
+
+</style>
+{% endblock %}

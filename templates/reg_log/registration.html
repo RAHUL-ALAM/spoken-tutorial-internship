@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="regform">
+<div id="header" style="width: 80%; margin-left: auto;margin-right: auto; text-align: center;padding: 10px;">
+<p style="font-size: 25px; font-weight: bold;"> Register Yourself</p>
+</div>
+<form id="regForm" class="form-horizontal" method="post" action="/register/" onsubmit="return validate()">
+  {% csrf_token %}
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="fname">First Name:</label>
+    <div class="col-sm-8">
+      {{ reg_form.first_name }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="lname">Last Name:</label>
+    <div class="col-sm-8">
+      {{ reg_form.last_name }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="username">Username:</label>
+    <div class="col-sm-8">
+      {{ reg_form.username }}
+      {{ reg_form.username.errors }}
+      {% if uerr %}
+	  <p>{{uerr}}</p>
+	  {% endif %}
+   <p id="uerr2" style="color: red; display: none;">
+   only number,english characters and @_. is allowed in username
+   </p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="email">Email:</label>
+    <div class="col-sm-8">
+      {{ reg_form.email }}
+      {% if eerr %}
+	  <p>{{eerr}}</p>
+	  {% endif %}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="gender">Gender:</label>
+    <div class="col-sm-8">
+    {{ userex_form.gender }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="password">Password:</label>
+    <div class="col-sm-8">
+      {{ reg_form.password }}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="r_password">Confirm password:</label>
+    <div class="col-sm-8">
+      {{ reg_form.password2 }}
+      <p id="pserr" style="color: red; display: none;"> Passwords Doesn't Match </p>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="phn">Mobile:</label>
+    <div class="col-sm-8">
+      {{ userex_form.phn }}
+      {% if perr %}
+	     <p style="color: red;">{{perr}}</p>
+	   {% endif %}
+  	  <p id="perr2" style="color: red; display: none;"> Mobile no should be of 10 digits</p> 
+    </div>
+  </div>
+ <!--  <p><label for="fname">First Name:</label>{{ reg_form.first_name }}</p>
+  <p><label for="lname">Last Name:</label>{{ reg_form.last_name }}</p>
+  <p><label for="username">Username:</label>{{ reg_form.username }}</p>
+  {% if uerr %}
+  <p>{{uerr}}</p>
+  {% endif %}
+   <p id="uerr2" style="color: red; display: none;">
+   only number,english characters and @_. is allowed in username
+   </p>
+  <p><label for="email">Email:</label>{{ reg_form.email }}</p>
+  {% if eerr %}
+  <p>{{eerr}}</p>
+  {% endif %}
+  <p><label for="gender">Gender:</label>{{ userex_form.gender }}</p>
+  <p><label for="password">Password:</label>{{ reg_form.password }}</p>
+  <p><label for="fname">Confirm Password:</label>{{ reg_form.password2 }}</p>
+  <p><label for="phn">Mobile:</label>{{ userex_form.phn }}</p>
+  {% if perr %}
+  <p>{{perr}}</p>
+  {% endif %}
+  <p id="perr2" style="color: red; display: none;"> Mobile no should be of 10 digits</p> -->
+  <div class="form-group"> 
+    <div class="col-sm-offset-4 col-sm-8">
+      <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+  </div>
+  <!-- <button type="submit" class="btn btn-primary">register</button> -->
+</form>
+</div>
+<style type="text/css">
+	.regform{
+		background-color: #E5E1E0;
+		width:40%;
+		margin-right: auto;
+		margin-left: auto;
+		margin-top: 30px;
+		padding: 20px;
+	}
+	/*.regform p{
+		padding: 2px;
+	}*/
+	.regform button{
+		width:100%;
+	}
+
+</style>
+<script type="text/javascript">
+document.getElementById('regForm').onsubmit = function() {
+//	var username = document.getElementById('username').value;
+// 	for(var i in username){
+// 		if(i!='a'){
+// 			alert(i);
+// 			return false;
+// 		}else{
+// 			alert('username should contain only english characters and +-._');
+// 			return false;
+// 		}
+
+// 	}
+
+  var pass1 = document.getElementById('password').value;
+  var pass2 = document.getElementById('r_password').value;
+  if(pass1!=pass2){
+    document.getElementById('pserr').style.display = "block";
+    document.getElementById('pserr').focus();
+    return false;
+  }else{
+    document.getElementById('pserr').style.display = "none";
+  }
+
+  var number = document.getElementById('phn').value;
+  if(number.length != 10){
+    console.log(10);
+    document.getElementById('perr2').style.display = "block";
+    document.getElementById('phn').focus();
+    return false;
+  }else{
+    document.getElementById('perr2').style.display = "none";
+  }
+
+
+}
+
+	$('#username').keypress(function(event){
+		// alert("hello");
+		var key = event.keyCode;
+		// alert(key);
+		if ((key >= 48 && key <=57) || (key >= 64 && key<= 90) || (key >= 97 && key  <= 122) || (key == 95) || (key==46)){
+			//alert ("correct");
+			document.getElementById('uerr2').style.display = "none";
+		}
+		else
+		{
+			//alert("Incorrect values");
+			document.getElementById('uerr2').style.display = "block";
+		}
+
+
+	});
+
+</script>
+{% endblock %}

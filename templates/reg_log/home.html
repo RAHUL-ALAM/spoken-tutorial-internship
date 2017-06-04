@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block body %}
+{% if user.is_authenticated %}
+	<div style="margin-top: 70px;"> 
+	<a href="#" style="text-decoration: none;">
+	<div id="org" class="adder" style="width: 40%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px;">
+		<p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
+		 Add Me as Organizer
+		</p>
+	</div>
+	</a>
+	
+	  <div id="orgform" class="modal">
+	<div class="modal-content">
+	  <span class="close">&times;</span>
+	  <form method="post" id="org_form">
+	  {% csrf_token %}
+	<div style=" margin: 0 auto; width: 50%;">
+	<div style=" padding: 10px;">
+	
+     <strong> State: </strong> &nbsp&nbsp&nbsp&nbsp&nbsp{{ orgform.State }}
+
+     <p>
+     {{ orgform.State.errors }}</p>
+
+     <p id="serr" style="color: red; display: none;"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
+     &nbsp&nbsp&nbsp&nbsp Select a state </p>
+  
+    </div>
+    <div style=" padding: 10px;">
+       <strong> College: </strong> &nbsp{{ orgform.collage }}
+
+      <p>{{ orgform.collage.errors }}</p>
+
+      <p id="cerr" style="color: red; display: none;">  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      &nbsp&nbsp&nbsp&nbsp Select a college </p>
+    </div>
+	  <div style="margin-left: 62px; padding: 10px;">
+	  <button type="submit" class="btn btn-primary"> Submit </button>
+	  </div>
+	 </div>
+	  </form>
+	  </div>
+	</div>
+	
+	<a href="#" style="text-decoration: none;">
+	<div id="tm" class="adder" style="width: 40%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px;">
+		<p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
+		 Add Me as Invigilator
+		</p>
+	</div>
+	</a>
+	<div id="tmform" class="modal">
+	</div>
+	</div>
+{% else %}
+{% endif %}
+
+<style type="text/css">
+	/*#orgform{
+		margin-right: auto;
+		margin-left: auto;
+	}*/
+	#state, #college{
+		width: 75%;
+		height: 30px;
+		-webkit-border-radius: 5px;
+	   -moz-border-radius: 5px;
+	   border-radius: 5px;
+	}
+	.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    margin: 0 auto;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+</style>
+
+<script type="text/javascript">
+
+	// Get the modal
+var modal = document.getElementById('orgform');
+
+// Get the button that opens the modal
+var btn = document.getElementById("org");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+document.getElementById("org_form").onsubmit = function() {
+	var state = document.getElementById("state").value
+	console.log(state);
+	if(state=='0'){
+		document.getElementById("serr").style.display = "block";
+		return false;
+	}
+	var clg = document.getElementById("college").value
+	if(clg=='0'){
+		document.getElementById("cerr").style.display = "block";
+		return false;
+	}
+}
+
+document.getElementById("state").onchange = function() {
+	document.getElementById("serr").style.display = "none";
+}
+document.getElementById("college").onchange = function() {
+	document.getElementById("cerr").style.display = "none";
+}
+
+</script>
+
+<script>
+	$(document).ready(function(){
+        $acstate = $('#state');
+        //$ac_district = $(".district");
+        $college = $("#college");
+        
+        $acstate.change(function() {
+            var state = $(this).val();
+            if(state){
+                $.ajax({
+                    url: "/ajax-state-collage/",
+                    type: "POST",
+                    data: {
+                        state : state,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                            $college.html(data);
+                            $college.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        } else{
+                            $college.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No college found for this district!!');
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock %}

@@ -10,4 +10,8 @@ Step2: Install django and other dependencies
 - pip install -r requirements.txt
 
 Step3: Run server
-- on python manage.py runserver
+- pyhton manage.py makemigrations reg_log
+- pyhton manage.py makemigrations TRAINING
+- pyhton manage.py migrate
+- python manage.py runserver
+

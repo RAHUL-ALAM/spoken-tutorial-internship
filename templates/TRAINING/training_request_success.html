@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<a href="/training/planner/" style="position: absolute; right: 60px; top: 80px;"> 
+<button class="btn btn-primary">Training Planner</button>
+</a>
+
+{% if messages %}
+{% for message in messages %}
+<div style="width: 70%; margin: 0 auto; text-align: center; margin-top: 2%;">
+<div class="alert alert-success alert-dismissable fade in">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Success!</strong> {{message}}
+</div>
+</div>
+{% endfor %}
+{% endif %}
+
+
+
+<div style="width: 80%; margin: 3% auto;">
+	<div>
+		<p style="text-align: center; font-size: 20px; font-weight: bold;"> The Following students are not registered </p>
+	</div>
+
+    {% if less_cols %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> Less no. of Columns  </p>
+        </div>
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in less_cols %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if more_cols %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> More no. of columns </p>
+        </div>
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in more_cols %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if wrong_email %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> Invalid Email </p>
+        </div>
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in wrong_email %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if invalid_gender %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> Invalid Gender </p>
+        </div>
+    	<table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th> Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in invalid_gender %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if done_this_foss %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> Already done this foss </p>
+        </div>
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th>Gender</th>
+                <th>Training Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in done_this_foss %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if email_repeated_in_csv %}
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+        <div>
+            <p style="font-size: 18px; font-weight: 500;"> Email already exist in this csv </p>
+        </div>
+        <table class="table table-hover">
+        <thead>
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Email </th>
+                <th>Gender</th>>
+            </tr>
+        </thead>
+        <tbody>
+        {% for i in email_repeated_in_csv %}
+          <tr>
+            {% for j in i %}
+            <td>{{j}}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

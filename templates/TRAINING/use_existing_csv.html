@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+
+<style type="text/css">
+	#choose-csv{
+    background-color: #E5E1E0;
+	width: 70%;
+	margin: 4% auto;
+    padding: 2%;
+	}
+	#choose-csv-form{
+		/*background-color: #E5E1E0;*/
+		width: 100%;
+		margin: 0 auto;
+		padding: 2%;
+	}
+</style>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css"/>
+
+
+<div id="choose-csv">
+<form id="choose-csv-form" class="form-horizontal" method="post" action="step-2/">
+{% csrf_token %}
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="dept">Depertment:</label>
+    <div class="col-sm-9">
+      <input class="form-control" type="text" id="dept" name="dept" value="{{dept}}" readonly>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="start-date">Start Date:</label>
+    <div class="col-sm-9"> 
+      <input class="form-control" type="date" name="date" value="{{date}}" readonly>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="foss">Foss:</label>
+    <div class="col-sm-9"> 
+      <input class="form-control" type="text" name="foss" value="{{foss}}" readonly="">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="foss">Choose CSV:</label>
+    <div class="col-sm-9"> 
+      <select id="csv" name="choose-csv" class="form-control">
+      <option value="-">Select CSV</option>
+      <option value="0">
+      	csv_id ---- depertment ---- foss ---- date
+	  </option>
+	  {% for csv in csvs %}
+	  {% if csv.training %}
+	  	<option value="{{csv.id}}">
+	  		{{csv.id}} ---- {{csv.training.depertment}} ---- {{csv.training.foss}} ---- {{csv.training.start_date}}
+	  	</option>
+	  {% endif %}
+	  {%endfor%}
+  	</select>
+    </div>
+  </div>
+  <div class="form-group"> 
+	<div class="col-sm-offset-3 col-sm-9">
+	  <button type="submit" class="btn btn-primary" style="width: 100%;"> submit </button>
+	</div>
+	</div>
+</form>
+</div>
+
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#csv').multiselect({
+        	buttonWidth: '100%',
+        	maxHeight: 200,
+        	Placeholder: 'Select Department...',
+        	filterPlaceholder: 'Search Department...',
+        	includeSelectAllOption: true,
+        	enableCaseInsensitiveFiltering: true,
+        });
+    });
+
+    document.getElementById('choose-csv-form').onsubmit = function() {
+      var csv = document.getElementById('csv').options[document.getElementById('csv').selectedIndex].value;
+      if(csv=='-' || csv=='0'){
+        alert('Select a CSV');
+        return false;
+      }
+    }
+
+</script>
+
+{% endblock %}

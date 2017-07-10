@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style type="text/css">
+	#div-for-add-participant-form{
+		width: 70%;
+		margin: 10% auto;
+	}
+	#add-participant-form{
+		background-color: #E5E1E0;
+		width: 70%;
+		margin: 1% auto;
+		padding: 2%;
+	}
+</style>
+
+<div id="div-for-add-participant-form">
+<form id="add-participant-form" class="form-horizontal" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+	<div class="form-group">
+    <label class="control-label col-sm-3" for="csv_file">Student CSV:</label>
+    <div class="col-sm-9"> 
+      {{form.csv_file}}
+      {{form.csv_file.errors}}
+    </div>
+  </div>
+  <div class="form-group"> 
+    <div class="col-sm-offset-3 col-sm-9">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+</div>
+{% endblock %}

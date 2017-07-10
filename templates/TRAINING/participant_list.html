@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div style="width: 80%; margin: 3% auto;">
+
+    <div style="box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+	<table class="table table-hover">
+    <thead>
+        <tr>
+            <th> Name </th>
+            <th> Email </th>
+            <th> Gender </th>
+            <th> Change </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for participant in participants %}
+        <tr>
+			<td>{{participant.user.first_name}}-{{participant.user.last_name}}</td>
+            <td>{{participant.user.email}}</td>
+            <td>{{participant.gender}}</td>
+            <td><a href="edit-student-{{participant.id}}/">edit</a></td>
+		</tr>
+		{% endfor %}
+    </tbody>
+    </table>
+    </div>
+</div>
+
+{% endblock %}

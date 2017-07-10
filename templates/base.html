@@ -2,63 +2,181 @@
 <html>
 <head>
 	<title></title>
+    <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Alegreya' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Josefin+Sans' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet' type='text/css'>
     {% load static %}
 	<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 	<script src="{% static 'js/jquery.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}" />
+     <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/yamm-min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/yamm.css' %}">
+
 </head>
 <body>
 
-<nav class="navbar navbar-default">
-<div class="container-fluid">
-<div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#topNavBar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/" style="font-size: 20px;">Spoken Tutorial</a>
-</div>
-<div class="collapse navbar-collapse" id="topNavBar">
-  <ul class="nav navbar-nav">
-                <li class=""><a href="#"></span>&nbsp; Software Training</a></li>
-                <li class=""><a href="#"></span>&nbsp; Creation</a></li>
-                <li class=""><a href="#"></span>&nbsp; News</a></li>
-                <li class=""><a href="#"></span>&nbsp; Forum</a></li>
-                <li class=""><a href="#"></span>&nbsp; About</a></li>
-                <li class=""><a href="#"></span>&nbsp; Statics</a></li>
-                <li class=""><a href="#"></span>&nbsp; Jobs</a></li>
-  </ul>
+<!-- header begin -->
+<div id="header-wrapper">
+    <nav class="navbar yamm navbar-default navbar-fixed-top" role="navigation">
+        <div id="header-inner">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-nav">
+                        <span class="sr-only">Toggle Navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a  id="logo-link" href="/">
+                            <img width = "45px" src="/static/images/logo.png" alt="Spoken-Tutorial logo">
+                            Spoken <span class='title'>Tutorial</span>
+                        </a>
+                </div>
+                
+                <div class="collapse navbar-collapse" id="main-nav">
+                        <ul class="nav navbar-nav">
+                        
 
-  <ul class="nav navbar-nav navbar-right">
-      {% if user.is_authenticated %}
-                <li>
-                    <a href="/profile/">
-                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Profile
-                    </a>
-                </li>
-                <li>
-                    <a href="/logout/">
-                        <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
-                    </a>
-                </li>
-      {% else %}
-                <li>
-                    <a href="/register/">
-                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Register
-                    </a>
-                </li>
-                 <li>
-                    <a href="/login/">
-                        <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp; Login
-                    </a>
-                </li>
-      {% endif %}
-  </ul>
-</div>
-</div>
-</nav>
+
+
+
+<li class="dropdown">
+    <a  class="dropdown-toggle" data-toggle="dropdown" href="#">Software Training <b class="caret"></b></a>
+    <ul class="dropdown-menu creation">
+        
+            
+            <li><a href="/training-dashboard/" >Training Dashboard</a></li>
+        
+            
+                <li class="divider"></li>
+            
+            <li><a href="/training/planner/" >Training Planner</a></li>
+        
+        
+    </ul>
+</li>
+
+
+
+
+</ul>
+                        
+<ul class="nav navbar-nav navbar-right">
+  {% if user.is_authenticated %}
+            <li>
+                <a href="#">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; {{ user.username }}
+                </a>
+            </li>
+            <li>
+                <a href="/logout/">
+                    <span class="glyphicon glyphicon-off" aria-hidden="true"></span>&nbsp; Logout
+                </a>
+            </li>
+  {% else %}
+            <li>
+                <a href="/register/">
+                    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>&nbsp; Register
+                </a>
+            </li>
+             <li>
+                <a href="/login/">
+                    <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span>&nbsp; Login
+                </a>
+            </li>
+  {% endif %}
+</ul>
+                </div>
+            </div> <!-- /.container-fluid -->
+        </div> <!-- /#header-inner -->
+    </nav>
+</div> <!-- /#header-wrapper -->
 
 {% block body %}
 {% endblock %}
+
+
+        <div id="footer-wrapper">
+                <div class="container-inner sans-serif">
+                    <div class="container">
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8 footer-links">
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <ul class="list-unstyled">
+                                    <li><a href="http://fossee.in/" target="_blank">FOSSEE Project</a></li>
+                                    <li><a href="http://www.scilab.in/" target="_blank">Scilab Project</a></li>
+                                    <li><a href="http://www.oscad.in/" target="_blank">Oscad</a></li>
+                                    <li><a href="http://python.fossee.in/" target="_blank">Python</a></li>
+                                    <li><a href="http://cfd.fossee.in/" target="_blank">CFD</a></li>
+                                    <li><a href="http://or.fossee.in/" target="_blank">OR-Project</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <ul class="list-unstyled">
+                                    <li><a href="http://aakashlabs.org" target="_blank">Aakash Labs</a></li>
+                                    <li><a href="http://www.co-learn.in/" target="_blank">Co-learn</a></li>
+                                    <li><a href="http://www.sakshat.ac.in/" target="_blank">Education Mission</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <ul class="list-unstyled">
+                                    <li><a href="http://process.spoken-tutorial.org/index.php/Software-Training" target="_blank">Software Training</a></li>
+                                    <li class=""><a href="http://process.spoken-tutorial.org/index.php/Software-Training#Contacts_For_Training" target="_blank">Contacts for Training</a></li>
+                                    
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                                <ul class="list-unstyled">
+                                    <!-- <li><a href="#" target="_blank">Partners</a></li> -->
+                                    
+                                    <li class="st-statcounter-seperator"></li>
+                                    <li class="st-statcounter">
+                                        <!-- Start of StatCounter Code for Default Guide -->
+                                        <b>
+                                            <!-- <script type="text/javascript">
+                                                var sc_project=5528933;
+                                                var sc_invisible=0;
+                                                var sc_security="e5fd867b";
+                                                var sc_text=2;
+                                            </script>
+                                            <script type="text/javascript" src="http://www.statcounter.com/counter/counter.js"></script>
+                                            <noscript>
+                                                <div class="statcounter">
+                                                    <a title="hits counter" href="http://statcounter.com/" target="_blank">
+                                                        <img class="statcounter" src="http://c.statcounter.com/5528933/0/e5fd867b/0/" alt="hits counter">
+                                                    </a>
+                                                </div>
+                                            </noscript> -->
+                                        </b> page loads
+                                        <!-- End of StatCounter Code for Default Guide -->
+                                        <!-- <p><a href="http://statcounter.com/p5528933/?guest=1" target="_blank">Click here to view stats</a></p> -->
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 footer-seperator"></div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 license fill iitb-logo">
+                            <div class="fill">
+                                <a href="http://www.iitb.ac.in" target="_blank">
+                                    <img width="110px" src="/static/images/iitb-logo.png" alt="IITB Logo">
+                                    <footer>
+                                        Developed at IIT Bombay <br />
+                                    </footer>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                             <p class="cc-data">
+                                <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+                                    <img src="/static/images/88x31.png" alt="CC logo" />
+                                </a> Spoken Tutorial by <a href="http://www.iitb.ac.in" target="_blank">IIT Bombay</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct="http://purl.org/dc/terms/" href="/" rel="dct:source">http://spoken-tutorial.org</a>. Permissions beyond the scope of this license may be available at <a xmlns:cc="http://creativecommons.org/ns#" href="/" rel="cc:morePermissions">http://spoken-tutorial.org</a>.
+                             </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 </body>
 </html>

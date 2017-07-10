@@ -4,56 +4,23 @@ from __future__ import unicode_literals
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.http import HttpResponse
-from .forms import userRegForm, userExtendeForm, logForm, addorgForm, addInstiForm
+from .forms import userRegForm, userExtendeForm, logForm, addorgForm, addInstiForm, OrgDeptForm
+from TRAINING.models import DeptOrg, Depertment, MasterBatch, Training
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-# from django.core.mail import send_mail
-# from django.core.exceptions import ValidationError
-from .models import userprofile, organiser, college, state, district, city
+from .models import userprofile, organiser, college, state, district, city, OrganiserHandover
 import json
 import simplejson
 
 
 # view for homepage for each user
-# if training_manager(is_staff=1) then render training manager homepage
-# if organiser(user exists in organiser model) then render organiser homepage
-# if authenticated user but none of above then go to normail user homepage
-# if none of above render basic homepage 
+# redirecting to the homepage 
+# homepage is common to all
 def home(request):
+	context = { }
 	if request.user.is_authenticated():
-
-		if userprofile.objects.get(user=request.user).is_staff:
-			if request.method == "POST":
-				i = college()
-				i.clg_name = request.POST['clg_name']
-				i.created_by = request.user
-				i.state = state.objects.get(id=request.POST['state'])
-				i.district = district.objects.get(id=request.POST['district'])
-				i.city = city.objects.get(id=request.POST['city'])
-				i.code = "354cw7f"
-				i.address = request.POST['address']
-				i.pincode = request.POST['pincode']
-				if request.POST['status']=='on':
-					i.status = True
-				else:
-					i.status = False
-				i.save()
-			return render(request,"reg_log/tm_dashboard.html",{'addInstiForm':addInstiForm()})
-
-		if organiser.objects.filter(user=request.user).exists():
-			return render(request,'reg_log/organiser_home.html',{'status': organiser.objects.get(user=request.user).status })
-
-		if request.method == "POST":
-			c = organiser()
-			c.user = request.user
-			c.collage = college.objects.get(id=int(request.POST['collage']))
-			c.save()
-			return redirect(home)
-		org_form = addorgForm()
-		return render(request,'reg_log/home.html',{'orgform':org_form})
-
-	return render(request,'reg_log/home.html')
-
+		context['user'] = request.user
+	return render(request, 'reg_log/home.html', context)
 
 
 
@@ -112,7 +79,8 @@ def logIn(request):
 					return redirect(home)
 				else:
 					log_form = logForm()
-					return render(request,'reg_log/login.html',{'log_form':log_form, 'err':"Invalid username or password"})
+					return render(request,'reg_log/login.html',
+						{'log_form':log_form, 'err':"Invalid username or password"})
 
 		log_form = logForm()
 		return render(request,'reg_log/login.html',{'log_form':log_form})
@@ -120,6 +88,92 @@ def logIn(request):
 	return redirect(home)
 
 
+
+
+
+# to the training dashboard
+# page will be displayed based on who is the person
+# views check the user is organiser or training manager
+# if organisr then his status 
+@login_required(login_url='/login/')
+def training_dashboard(request):
+	context = { }
+
+	if userprofile.objects.get(user=request.user).is_staff:
+		context['training_manager']=1
+
+	if organiser.objects.filter(user=request.user).exists():
+		requested_organiser = organiser.objects.get(user=request.user)
+		if requested_organiser.status == 1:
+			# this means he is a organsier
+			context['organiser']=1       
+			this_college = requested_organiser.collage
+			context['organisers']=organiser.objects.filter(collage= this_college, status=1).exclude(user=request.user)
+		elif requested_organiser.status == 2:
+			context['organiser']=2     # this means his orhaniser requested rejected
+		elif requested_organiser.status == 3:
+			context['organiser']=3     # this means he heaned over his organiser request
+		else:
+			context['organiser']=4     # represented request neither approved nor rejected
+
+		context['organiserhandoverfrom'] = OrganiserHandover.objects.filter(handedoverto=requested_organiser, status=0)
+		context['organiserhandoverto'] = OrganiserHandover.objects.filter(handedoverfrom=requested_organiser)		
+
+	else:
+		context['organiser']=0         # not requested for organiser
+
+	return render(request,'reg_log/training_dashboard.html', context)
+
+
+
+# simple function normally renders a form
+# if there is any post data then create a organiser and deptorg object
+@login_required(login_url='/login/')
+def request_for_organiser(request):
+	addorgform = addorgForm(request.POST or None)
+	if request.method == "POST":
+		c = organiser()
+		c.user = request.user
+		c.collage = college.objects.get(id=int(request.POST['collage']))
+		c.save()
+		d = DeptOrg()
+		d.org = request.user
+		d.dept = Depertment.objects.get(id=int(request.POST['dept']))
+		d.college = c.collage
+		d,status = False
+		d.save()
+		return redirect(training_dashboard)
+	
+	return render(request,'reg_log/request_for_organiser.html',{'addorgForm':addorgform})
+
+
+
+# helps organiser to add more departments under his supervision
+@login_required(login_url='/login/')
+def add_depertment(request):
+	if request.user.is_authenticated():
+		if organiser.objects.filter(user=request.user).exists():
+			form = OrgDeptForm(request.POST or None)
+			err = ""
+			e = 0
+			if request.method=="POST":
+				dept_id = int(request.POST['dept'])
+				if DeptOrg.objects.filter(college=organiser.objects.get(user=request.user).collage,
+					dept=Depertment.objects.get(id=dept_id)).exists():
+					err = "organiser of " + str(Depertment.objects.get(id=dept_id)) +" already exists in " + \
+					str(organiser.objects.get(user=request.user).collage)
+					e=e+1
+
+				if e==0:
+					c = DeptOrg()         # c is a deptorg object to save in database
+					c.org = request.user
+					c.dept = Depertment.objects.get(id=dept_id)
+					c.college = organiser.objects.get(user=request.user).collage
+					c.save()
+					return redirect(training_dashboard)
+			return render(request,'reg_log/add_department.html',{'adddeptform':form, 'err':err})
+
+	return HttpResponse("You can't access this webpage")
 
 
 # this view is only for training manager
@@ -151,20 +205,6 @@ def organiser_request_accept(request, user_id, status):
 		user.approved_by = request.user
 		user.save()
 		return redirect(organiser_list, status)
-		# states = state.objects.filter(training_manager=request.user)
-		# colleges = college.objects.filter(state__in=states)
-		# # org_list = organiser.objects.filter(status=status, collage__in=college.objects.filter(state__in=states))
-		# if status=="new":
-		# 	org_list = organiser.objects.filter(status=0, collage__in=college.objects.filter(state__in=states))
-		# elif status=="current":
-		# 	org_list = organiser.objects.filter(status=1, collage__in=college.objects.filter(state__in=states))
-		# if status=="rejected":
-		# 	org_list = organiser.objects.filter(status=2, collage__in=college.objects.filter(state__in=states))
-
-		# return render(request,'reg_log/tm_organiserlist.html',{'states':states, 
-		# 	'colleges':colleges, 'organisers':org_list, 'status':str(status)})
-
-
 
 
 # this view is only for training manager
@@ -175,11 +215,36 @@ def organiser_request_reject(request, user_id, status):
 		user = organiser.objects.get(user_id=user_id)
 		user.approved_by = request.user
 		user.status = 2
-		# user.approved_by = trainingManager.objects.filter(user=request.user).first()
 		user.save()
 		return redirect(organiser_list, status)
 
 
+@login_required(login_url='/login/')
+def addInstitution(request):
+	form = addInstiForm(request.POST or None)
+	if request.method == "POST":
+		i = college()                              # i is a college_object to save in database
+		i.clg_name = request.POST['clg_name']
+		i.created_by = request.user
+		i.state = state.objects.get(id=request.POST['state'])
+		i.district = district.objects.get(id=request.POST['district'])
+		i.city = city.objects.get(id=request.POST['city'])
+		count = college.objects.filter(clg_name=i.state).count()   # counting no of colleges in state
+		state_code = i.state.code  
+		i.code = str(state_code)+str(count+1)                      # generating code in daaatbase
+		i.address = request.POST['address']
+		i.pincode = request.POST['pincode']
+		if request.POST['status']=='on':
+			i.status = True
+		else:
+			i.status = False
+		i.save()
+
+		masterbatch_object = MasterBatch()              # auto-geenrating masterbatch fro college
+		masterbatch_object.college = i 
+		masterbatch_object.save()               
+		return redirect(training_dashboard)
+	return render(request, 'reg_log/addInstitution.html',{'addInstiForm':form})
 
 # calling through ajax
 # showing colleges from a particular state
@@ -241,10 +306,13 @@ def ajax_college_state_organiser_list(request,status):
 		data2 = list(organiser.objects.filter(status=2, collage__in=college.objects.filter(state=state)))
 	if data2 and status=="new":
 		for i in data2:
-			tmp2 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td><a href="/organiser-request/accept/'+str(i.user_id)+'/">accept</a>&nbsp|&nbsp <a href="/organiser-request/reject/'+str(i.user_id)+'/">reject</a></td></tr>'
+			tmp2 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+ \
+			'</td><td>'+str(i.collage.state)+'</td><td><a href="/organiser-request/accept/'+str(i.user_id)+ \
+			'/">accept</a>&nbsp|&nbsp <a href="/organiser-request/reject/'+str(i.user_id)+'/">reject</a></td></tr>'
 	else:
 		for i in data2:
-			tmp2 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
+			tmp2 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+ \
+			'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
 	return HttpResponse(simplejson.dumps({'tmp1':tmp, 'tmp2':tmp2}), content_type="application/json")
 
 
@@ -262,10 +330,14 @@ def ajax_college_organiser_list(request,status):
 		data = list(organiser.objects.filter(status=2, collage=college.objects.get(id=clg)))
 	if data and status=="new":
 		for i in data:
-			tmp += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td><a href="organiser-request/accept/'+str(i.user_id)+'/">accept</a>&nbsp|&nbsp <a href="organiser-request/reject/'+str(i.user_id)+'/">reject</a></td></tr>'
+			tmp += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+ \
+			str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td><a href="organiser-request/accept/'+ \
+			str(i.user_id)+'/">accept</a>&nbsp|&nbsp <a href="organiser-request/reject/'+str(i.user_id)+ \
+			'/">reject</a></td></tr>'
 	else:
 		for i in data:
-			tmp += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
+			tmp += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+ \
+			'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
 
 	return HttpResponse(simplejson.dumps(tmp), content_type="application/json")
 
@@ -297,9 +369,60 @@ def reset_organiser_list(request, status):
 		data = list(organiser.objects.filter(status=2, collage__in=colleges))
 	if data and status=="new":
 		for i in data:
-			tmp3 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td><a href="organiser-request/accept/'+str(i.user_id)+'/">accept</a>&nbsp|&nbsp <a href="organiser-request/reject/'+str(i.user_id)+'/">reject</a></td></tr>'
+			tmp3 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+ \
+			'</td><td>'+str(i.collage.state)+'</td><td><a href="organiser-request/accept/'+str(i.user_id)+ \
+			'/">accept</a>&nbsp|&nbsp <a href="organiser-request/reject/'+str(i.user_id)+'/">reject</a></td></tr>'
 	else:
 		for i in data:
-			tmp3 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
+			tmp3 += '<tr><td>'+str(i.user.username)+'</td><td>'+str(i.user.email)+'</td><td>'+str(i.collage)+ \
+			'</td><td>'+str(i.collage.state)+'</td><td>'+i.updated.strftime('%Y-%m-%d %H:%M')+'</td></tr>'
 
-	return HttpResponse(simplejson.dumps({'states':tmp, 'colleges':tmp2, 'table':tmp3}), content_type="application/json")
+	return HttpResponse(simplejson.dumps(
+		{'states':tmp, 'colleges':tmp2, 'table':tmp3}), content_type="application/json")
+
+
+
+
+
+# to perform organiser handover
+def organiser_handover(request):
+
+	from_organiser = organiser.objects.get(user = request.user)
+	to_organiser = organiser.objects.get(id=int(request.POST['select-organiser']))
+
+
+	# create a object to save in databse with status=0
+	# on approval status will be 1
+	model_object = OrganiserHandover()
+	model_object.handedoverfrom = from_organiser
+	model_object.handedoverto = to_organiser
+	model_object.status = 0
+	model_object.save()
+
+	return redirect(training_dashboard)
+
+
+def organiserhandover_accept(request, object_id):
+
+	model_object = OrganiserHandover.objects.get(id=object_id)
+	model_object.status = 1        # on accept status will be 1
+	model_object.save()
+
+	# organiser will get access to the trainings of past organiser
+	trainings = Training.objects.filter(this_organiser=model_object.handedoverfrom)
+	for training in trainings:
+		training.handedoverto.add(model_object.handedoverto)
+
+	from_organiser = model_object.handedoverfrom
+	from_organiser.status = 3    # organiser status will be 3 to show that he is no more orgaiser
+	from_organiser.save()
+
+	return redirect(training_dashboard)
+
+def organiserhandover_reject(request,object_id):
+
+	model_object = OrganiserHandover.objects.get(id=object_id)
+	model_object.status = 2       # request status will be 2
+	model_object.save()
+
+	return redirect(training_dashboard)

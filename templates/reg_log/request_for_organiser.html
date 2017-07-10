@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style type="text/css">
+	#addorgform{
+		width: 40%; 
+		margin: 6% auto;
+		padding: 2.5% 5%; 
+		background-color: #E5E1E0;
+	}
+</style>
+
+
+<div id="addorgform">
+<form method="post" id="org_form">
+{% csrf_token %}
+	<div class="form-group">
+	    <label for=Ssate>State:</label>
+	    {{addorgForm.State}}
+	    {{addorgForm.State.errors}}
+	</div>
+	<div class="form-group">
+	    <label for="college">College:</label>
+	    {{addorgForm.collage}}
+	    {{addorgForm.collage.errors}}
+	</div>
+    <div class="form-group">
+        <label for="college">Department:</label>
+        {{addorgForm.dept}}
+        {{addorgForm.dept.errors}}
+    </div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+
+
+<script>
+	$(document).ready(function(){
+        $acstate = $('#state');
+        //$ac_district = $(".district");
+        $college = $("#college");
+        
+        $acstate.change(function() {
+            var state = $(this).val();
+            if(state){
+                $.ajax({
+                    url: "/ajax-state-collage/",
+                    type: "POST",
+                    data: {
+                        state : state,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                            $college.html(data);
+                            $college.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        } else{
+                            $college.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No college found for this district!!');
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+
+    document.getElementById('addorgform').onsubmit = function() {
+        var state = document.getElementById('state').options[document.getElementById('state').selectedIndex].value;
+        if(state=='0'){
+            alert("Select a State")
+            return false;
+        }
+
+        var college = document.getElementById('college').options[document.getElementById('college').selectedIndex].value;
+        if(college=='0'){
+            alert("Select a College")
+            return false;
+        }
+
+        var dept = document.getElementById('dept').options[document.getElementById('dept').selectedIndex].value;
+        if(dept=='-'){
+            alert("Select a Department")
+            return false;
+        }
+    }
+
+</script> -->
+
+
+{% endblock %}

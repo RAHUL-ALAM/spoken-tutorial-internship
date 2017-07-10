@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django import forms
 from .models import userprofile, GENDER_CHOICES, state, college, organiser
+from TRAINING.models import Depertment, DeptOrg
 
 #modelform for user registration
 class userRegForm(forms.ModelForm):
@@ -54,6 +55,12 @@ for state in all_states:
 
 
 
+DEPT_CHOICES = (('-','Select Depatrment'),)
+all_depts = Depertment.objects.all()
+for dept in all_depts:
+	DEPT_CHOICES += ((str(dept.id), str(dept.name)),)
+
+
 
 # form to process organiser request
 class addorgForm(forms.Form):
@@ -61,6 +68,8 @@ class addorgForm(forms.Form):
 	State = forms.ChoiceField(choices=STATE_CHOICES,widget=forms.Select(attrs={'id':"state",'class':"form-control"}))
 	collage = forms.ChoiceField(choices=(('-','------'),), widget=forms.Select(attrs=
 		{ 'id':"college", 'class':"form-control",'disabled':True }))
+	dept = forms.ChoiceField(choices=DEPT_CHOICES, widget=forms.Select(attrs=
+		{'id':"dept", 'class':"form-control"}))
 
 
 
@@ -80,5 +89,12 @@ class addInstiForm(forms.Form):
 		{'id':"pin", 'class':"form-control", 'placeholder':"Enter Pincode"}))
 	status = forms.BooleanField(widget=forms.CheckboxInput(attrs=
 		{'id':"status", 'class':"form-control"}))
+
+
+
+class OrgDeptForm(forms.Form):
+	
+	dept = forms.ChoiceField(choices=DEPT_CHOICES, widget=forms.Select(attrs=
+		{'id':"dept", 'class':"form-control"}))
 
 

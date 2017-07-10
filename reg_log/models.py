@@ -7,7 +7,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from datetime import datetime
 
-# Create your models here.
 
 #Choices for gender of the person
 GENDER_CHOICES = (
@@ -23,7 +22,7 @@ class userprofile(models.Model):
 
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	gender = models.CharField(choices=GENDER_CHOICES,default='M',max_length=1)
-	phn = models.BigIntegerField()
+	phn = models.BigIntegerField(null=True)
 	is_active = models.BooleanField(default=False)             
 	is_staff = models.BooleanField(default=False)              
 
@@ -114,3 +113,15 @@ class organiser(models.Model):
 
 	def __str__(self):
 		return str(self.user.username)
+
+
+
+class OrganiserHandover(models.Model):
+
+	handedoverfrom = models.ForeignKey(organiser, on_delete=models.CASCADE)
+	handedoverto = models.ForeignKey(organiser, on_delete=models.CASCADE, related_name = 'organiser_handed_over_to')
+	handedoveron = models.DateTimeField(auto_now_add = True, null=True)
+	status = models.PositiveSmallIntegerField(default=0)
+
+	def __str__(self):
+		return str(self.handedoverfrom.user.username) + 'to' + str(self.handedoverto.user.username)

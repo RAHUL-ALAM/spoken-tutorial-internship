@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-{% if user.is_authenticated %}
+<!-- {% if user.is_authenticated %}
 	<div style="margin-top: 70px;"> 
 	<a href="#" style="text-decoration: none;">
 	<div id="org" class="adder" style="width: 40%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px;">
@@ -192,6 +192,228 @@ document.getElementById("college").onchange = function() {
             }
         });
     });
-</script>
+</script> -->
+<div style="width: 70%; margin-left: auto; margin-right: auto; padding: 1%;">
+<form class="form-inline">
+  <div class="form-group">
+    <label for="foss">Foss:</label>
+    <select class="form-control" style="width: 300px;">
+        <option value="-">Select Foss</option>
+        <option value="-">C</option>
+        <option value="-">JAVA</option>
+        <option value="-">LINUX</option>
+    </select>
+  </div>
+  &nbsp
+  <div class="form-group">
+    <label for="language">Language:</label>
+    <select class="form-control" style="width: 300px;">
+        <option value="-">Select Foss</option>
+        <option value="-">English</option>
+        <option value="-">Bengali</option>
+        <option value="-">Hindi</option>
+    </select>
+  </div>
+    &nbsp
+  <button type="button" class="btn btn-primary">Submit</button>
+</form>
+</div>
+
+
+
+<div class="page1">
+    <div id="banner-wrapper">
+        <div class="banner-img-container">
+            <img class="col-lg-12 col-md-12 col-sm-12 col-xs-12 banner-img" alt="banner image" src="/static/images/home-banner.jpg">
+            <!-- <div class='go'>
+                <a href="/tutorial-search/" title="Search videos"><img class='go-image' alt="rounded arrow" src="/static/images/rounded-arrow.png"></a>
+            </div> -->
+            <!-- <div class="awards">
+                <ul>
+                    <li class="awards-item col-sm-4 col-md-4"><a class="" href="http://googleresearch.blogspot.in/2015/03/announcing-google-mooc-focused-research.html" target="_blank">Google MOOCs <br>Research Award</a></li>
+                    <li class="awards-item col-sm-4 col-md-4"><a class="blink" href="/ht-for-mumbai-nomination">Nomination for <br>HT for Mumbai Awards 2015  </a></li>
+                    <li class="awards-item col-sm-4 col-md-4"><a class="" href="http://www.reimagine-education.com/nurturing-employability-award/" target="_blank">Reimagine Education <br>Award</a></li>
+                </ul>
+            </div> -->
+        </div>
+        <div class="banner-items col-lg-offset-2 col-md-offset-2 col-sm-offset-2 col-xs-offset-2 col-lg-8 col-md-8 col-sm-8 col-xs-8">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <a href="/software-training/" title="Software Training"><img alt="Software training" class="banner-item" src="/static/images/1.jpg"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <a href="/creation/" title="Spoken Tutorial Creation"><img alt="Spoken-Tutorial creation" class="banner-item" src="/static/images/2.jpg"></a>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                <a href="http://forums.spoken-tutorial.org" title="Spoken Tutorial Forum" target="_blank"><img alt="Spoken-Tutorial forums" class="banner-item" src="/static/images/3.jpg"></a>
+            </div>
+        </div>
+    </div>
+    <div class="scroller">
+        <ul class="list-unstyled">
+            <li><a class="first" href="#page-wrapper"></a></li>
+            <li><a class="second" href="#page2"></a></li>
+            <li><a class="thired" href="#page3"></a></li>
+            <li><a class="fourth" href="#page4"></a></li>
+        </ul>
+    </div>
+</div>
+
+<div style="width: 95%; margin-right: auto; margin-left: auto;">
+<div id="page2" class="page2">
+    <a href="#page2"></a>
+    <div class="spacer"></div>
+<!-- testimonial start -->
+    <div class="row">
+        <div id="testimonials" class="inner">
+            <h4 class='col-lg-12 col-md-12 col-sm-12 page-title'>Testimonials</h4>
+            
+                <div class="col-lg-6 col-md-6 col-sm-6 testimonial-item">
+                    <div class="testimonial-content">
+                        <i class="fa fa-quote-left pull-left testimonial-quote"></i>
+                        Team LATEX (IIT GN) would like to thank you for your assistance in conducting the workshop on LaTeX held on Saturday, November 14, 2015. We have learned a lot during the course of preparation and during the workshop, both technically and socially, and have grown as a team.
+We would like to express our gratitude toward.. - <a href="/testimonials"> read </a>
+                        <i class="fa fa-quote-right pull-right testimonial-quote"></i>
+                    </div>
+                    <div class="pull-left">
+                        <div class="user-details">
+                            <div class="caretr"></div>
+                            <img width="30" height="30" alt="blank profile image" src="/static/images/no-profile-image.jpg" />
+                            
+                                 Team LaTeX, IIT Gandhinagar
+                            
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="col-lg-6 col-md-6 col-sm-6 testimonial-item">
+                    <div class="testimonial-content">
+                        <i class="fa fa-quote-left pull-left testimonial-quote"></i>
+                        It&#39;s a great work done by Spoken tutorial project developer(IIT Bombay) ,even without their co-operation and support it won&#39;t be possible in place like Mizoram. - <a href="/testimonials"> read </a>
+                        <i class="fa fa-quote-right pull-right testimonial-quote"></i>
+                    </div>
+                    <div class="pull-left">
+                        <div class="user-details">
+                            <div class="caretr"></div>
+                            <img width="30" height="30" alt="blank profile image" src="/static/images/no-profile-image.jpg" />
+                            
+                                 Ms. Ranjita Das, Assistant Professor, Dept of CSE, National Institute of Technology, Mizoram.
+                            
+                        </div>
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</div>
+<div style="padding: 2%;">
+<div id="page3" class='page3 forum-container'>
+    <a href="#page3"></a>
+    <div class="spacer"></div>
+    <div class="row">
+        <div class="container-inner">
+            <h4 class='col-lg-8 col-md-8 col-sm-8 page-title'>Forum</h4>
+            <div class="col-lg-8 col-md-8 col-sm-8">
+                <div class="top-border">
+                    <p class="justify">Spoken Tutorial Forums is a friendly online discussion forum.  You can join existing discussions or start new topics, and get lots of replies from the Spoken Tutorial community.   Registration to Forums is completely free and takes only one minute.</p>
+        <p class="justify">Forums is very easy to use, even for computer newbies. It's very easy to format forum posts with fonts, colors, and many other options. You can attach files to your posts directly from your computer. You can give links to webpages or videos from other video websites.</p>
+
+        <p class="justify">Be assured of an answer within 3 working days of posting your question. <a class="pull-right" href="http://forums.spoken-tutorial.org" target="_blank">Click here to proceed >></a></p>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                 <img  src="/static/images/forum.jpg" alt="forums image">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="container-inner">
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <h4 class='page-title'>News / Events</h4>
+                <div class="top-border"></div>
+                <div>
+                    
+                        Check out the amazing <a href="/testimonials" target="_blank">testimonials</a>, <a href="/news/article" target="_blank">media articles</a>, <a href="/news/news-and-events/" target="_blank">events</a>, <a href="/news/official-letters-and-links/" target="_blank">collaboration</a>, seminars, talks and campaigns about the Spoken Tutorial Project.   Browse through our gallery and see what the Project has been doing across India. 
+                    
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6">
+                <h4 class='page-title'>Software Training</h4>
+                <div class="top-border"></div>
+                <div>
+                    The Spoken Tutorial Project is about teaching and learning a particular FOSS (Free and Open Source Software) like Linux, Scilab, LaTeX, PHP & MySQL, Java, C/C++, LibreOffice etc. via an easy Video tool - Spoken Tutorials. <br /><br /> <a class="pull-right" href="http://process.spoken-tutorial.org/index.php/Software-Training" target="_blank" >Click more >></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="page4" class="page4">
+    <a href="#page4"></a>
+    <div class="spacer"></div>
+    <div class="row">
+        <div class="contact-container container-inner three-cols">
+            <h2 class='page-title stay-middle'>Thanks for visiting us</h2>
+            <div class="col-lg-4 col-md-4 col-sm-4 contact comfortaa">
+                <h4 class='page-title'>Contact</h4>
+                <div><span class="fa fa-2 fa-home"></span>
+                  <div>Spoken Tutorial Project,<br>TCS Lab,Behind CAD Centre,<br>IIT Bombay, Powai,<br>Mumbai - 400076</div>
+                </div>
+                <div><span class="fa fa-2 fa-phone"></span> + 91 22 25764229 </div>
+                <div><span class="fa fa-2 fa-envelope"></span> contact [at] spoken-tutorial [dot] org</div>
+                <div><span class="fa fa-2 fa-youtube"></span> <a href="http://www.youtube.com/user/SpokenTutorialIITB/" target="_blank">YouTube channel</a></div>
+                <div><span class="fa fa-2 fa-google-plus"></span> <a href="https://plus.google.com/114550410376641567079" target="_blank">Google+ page</a></div>
+                <div><span class="fa fa-2 fa-facebook-square"></span> <a href="https://www.facebook.com/SpokenTutorial.org" target="_blank">Facebook page</a></div>
+                <div><span class="fa fa-2 fa-skype"></span> st-iitb</div>
+                <!--<div><span class="fa fa-2 fa-twitter"></span> <a href="#">Twitter</a></div>-->
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 feedback">
+                <h4 class='page-title'>Feedback</h4>
+                <form name="ajaxform" id="ajaxform" class="form-horizontal" action="/site-feedback/" method="post">
+                    <fieldset>
+                        <!-- Name input-->
+                        <div class="form-group feedback-name">
+                            <label class="col-md-4 control-label comfortaa" for="name">Name</label>
+                            <div class="col-md-8">
+                                <input id="name" name="name" type="text" placeholder="Your name" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- Email input-->
+                        <div class="form-group feedback-email">
+                            <label class="col-md-4 control-label comfortaa" for="email">Your E-mail</label>
+                            <div class="col-md-8">
+                                <input id="email" name="email" type="email" placeholder="Your email" class="form-control email">
+                            </div>
+                        </div>
+
+                        <!-- Message body -->
+                        <div class="form-group feedback-message">
+                            <label class="col-md-4 control-label comfortaa" for="message">Your message</label>
+                            <div class="col-md-8">
+                                <textarea class="form-control" id="message" name="message" placeholder="Please enter your message here..." rows="5"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Form actions -->
+                        <div class="form-group">
+                            <div class="col-md-12 text-right">
+                                <button id="site-feedback" class="btn btn-default">Submit</button>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 support-us">
+                <h4 class='page-title'>Collaborate with Us</h4>
+                <div class='collaborate'>
+                    <p>We invite you to become a part of this amazing journey of making India IT-literate.  Join our growing network of Resources Centres, Organisers, Content creators, Domain Experts, Translators, Dubbers, Reviewers and help us to reach every nook and corner of India.</p><p>First step to do so - fill the form given <a href="/creation/collaborate/">here</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
 
 {% endblock %}

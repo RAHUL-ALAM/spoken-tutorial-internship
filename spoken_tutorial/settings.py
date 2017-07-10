@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'floppyforms',
     'reg_log',
+    'TRAINING',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +105,8 @@ DATABASES = {
 }
   }
   
-  
+LOGIN_URL = '/login/'
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 

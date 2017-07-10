@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style type="text/css">
+	#addinstiform{
+		width: 40%; 
+		margin: 2% auto;
+		padding: 2.5% 5%; 
+		background-color: #E5E1E0;
+	}
+</style>
+
+
+<div id="addinstiform" >
+<form method="post">
+{% csrf_token %}
+	<div class="form-group">
+	<label for="email">College Name:</label>
+	{{addInstiForm.clg_name}}
+	</div>
+	<div class="form-group">
+	<label for="state">State:</label>
+	{{addInstiForm.state}}
+	</div>
+	<div class="form-group">
+	<label for="district">District:</label>
+	{{addInstiForm.district}}
+	</div>
+	<div class="form-group">
+	<label for="city">City:</label>
+	{{addInstiForm.city}}
+	</div>
+	<div class="form-group">
+	<label for="address">Address:</label>
+	{{addInstiForm.address}}
+	</div>
+	<div class="form-group">
+	<label for="pin">Pincode:</label>
+	{{addInstiForm.pincode}}
+	</div>
+	<div class="form-group">
+	<label>{{addInstiForm.status}} Status </label>
+	</div>
+
+	<button type="submit" class="btn btn-primary" style="margin-top: 2.5%;">Submit</button>
+</form>
+</div>
+
+
+<script>
+	$(document).ready(function(){
+        $acstate = $('#state');
+        $district = $("#district");
+        $city = $("#city");
+        
+        $acstate.change(function() {
+            var state = $(this).val();
+            if(state){
+                $.ajax({
+                    url: "/ajax-state-district/",
+                    type: "POST",
+                    data: {
+                        state : state,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                            $district.html(data);
+                            $district.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        } else{
+                            $district.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No district found for this state!!');
+                        }
+                    }
+                });
+            }
+        });
+
+        $district.change(function() {
+            var district = $(this).val();
+            if(district){
+                $.ajax({
+                    url: "/ajax-district-city/",
+                    type: "POST",
+                    data: {
+                        district : district,
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    // beforeSend: function() {
+                    //     $('.ajax-refresh-institution').show();
+                    // },
+                    success: function(data) {
+                        if(data){
+                            $city.html(data);
+                            $city.removeAttr("disabled");
+                            // $('.ajax-refresh-institution').hide();
+                        } else{
+                            $city.attr("disabled", "disabled");
+                            // $('.ajax-refresh-institution').hide();
+                            alert('No city found for this district!!');
+                        }
+                    }
+                });
+            }
+        });
+    });
+	        
+</script>
+
+
+{% endblock %}

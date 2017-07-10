@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block body %}
+
+<style type="text/css">
+	#add-dept{
+		width: 50%;
+		margin: 10% auto; 
+	}
+	#add-dept-form{
+		padding: 4%; 
+		border-radius: 5px;
+		background-color: #E5E1E0;
+	}
+</style>
+
+<!-- <div style="width: 50%; margin-left: auto; margin-right: auto;">
+{% if err %}
+	<div class="alert alert-danger alert-dismissable fade in">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	{{err}}
+	</div>
+{%endif%}
+</div> -->
+
+<div id="add-dept">
+<div >
+{% if err %}
+	<div class="alert alert-danger alert-dismissable fade in">
+	<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	{{err}}
+	</div>
+{%endif%}
+</div>
+
+<form id="add-dept-form" class="form-horizontal" method="post">
+{% csrf_token %}
+  <div class="form-group">
+    <label class="control-label col-sm-4" for="dept">Choose Department:</label>
+    <div class="col-sm-8">
+      {{adddeptform.dept}}
+      {{adddeptform.dept.errors}}
+    </div>
+  </div>
+  <div class="form-group"> 
+    <div class="col-sm-offset-4 col-sm-8">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+</div>
+
+<script type="text/javascript">
+document.getElementById('add-dept-form').onsubmit = function() {
+	var dept = document.getElementById('dept').options[document.getElementById('dept').selectedIndex].value;
+	if(dept=='-'){
+		alert("Select a Department")
+		return false;
+	}
+}
+</script>
+
+{% endblock %}

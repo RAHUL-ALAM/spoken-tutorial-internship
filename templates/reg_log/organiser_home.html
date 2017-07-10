@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-
+          
 {% if status == 0 %}
 	<div id="org" class="adder" style="width: 60%; margin-left: auto; margin-right: auto; background-color: #229954;  border-radius: 5px; margin-top: 100px;">
 		<p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
@@ -9,58 +9,138 @@
 		</p>
 	</div>
 {% else %}
-<div style="width: 90%; margin-right: auto; margin-left: auto; margin-bottom: 20px;">
-filter
-</div>
-<div style="width: 90%; margin-right: auto; margin-left: auto; box-shadow: 1px 1px 4px #888888;">
-<ul class="nav nav-tabs">
-  <li class="active"><a href="#">new requests</a></li>
-  <li><a href="#">current organisers</a></li>
-  <li><a href="#">rejected</a></li>
-</ul>
-<div id="new" style="width: 90%; margin-right: auto; margin-left: auto; padding-bottom: 5px;">
-	<table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>College</th>
-        <th>State</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>John</td>
-        <td>john@example.com</td>
-        <td>IITB</td>
-        <td>Maharastra</td>
-        <td>accept|reject</td>
-      </tr>
-      <tr>
-        <td>John</td>
-        <td>john@example.com</td>
-        <td>IITB</td>
-        <td>Maharastra</td>
-        <td>accept|reject</td>
-      </tr>
-      <tr>
-       <td>John</td>
-        <td>john@example.com</td>
-        <td>IITB</td>
-        <td>Maharastra</td>
-        <td>accept|reject</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<div id="current" style="width: 90%; margin-right: auto; margin-left: auto; display: none;">
-	
-</div>
-<div id="rejected" style="width: 90%; margin-right: auto; margin-left: auto; display: none;">
-	
-</div>
-</div>
+
+<div style="margin-top: 70px;">
+
+<a href="#" style="text-decoration: none;">
+
+ <div style="width: 40%; margin-left: auto; margin-right: auto;">
+    {% for i in err %}
+      <div class="alert alert-danger alert-dismissable fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        {{i}}
+      </div>
+    {%endfor%}
+    </div>
+
+  <div id="adddept" class="adder" style="width: 40%; margin-left: auto; margin-right: auto;">
+   <!--  <p style="font-size: 30px; font-weight: bold; text-align: center; padding: 10px; color: white;">
+     Choose depertments you want 
+    </p> -->
+    <form method="post">
+    {% csrf_token %}
+    <div>
+      <label for="dept">Depertment:</label>
+      {{form.dept}}
+      {{form.dept.errors}}
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 2.5%;">Submit</button>
+  </form>
+  </div>
+  </a>
+
+<!--   <div id="adddeptform" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span> -->
+    
+    <!-- <form method="post">
+    {% csrf_token %}
+    <div class="row">
+      <label for="dept">Depertment:</label>
+      {{form.dept}}
+      {{form.dept.errors}}
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="margin-top: 2.5%;">Submit</button>
+  </form> -->
+ <!--  </div>
+  </div> -->
+
+  </div>
+
+
+
+
+
+
+<style type="text/css">
+  
+  .modal{ 
+    display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      margin: 0 auto;
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  /* Modal Content/Box */
+  .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 3%;
+      border: 1px solid #888;
+      width: 40%; /* Could be more or less, depending on screen size */
+  }
+
+  /* The Close Button */
+  .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+  }
+  </style>
+
+      <script type="text/javascript">
+        document.getElementById("dept").options[0].disabled=true;
+      </script>
+
+
+  <!-- <script type="text/javascript">
+    
+    // Get the modal
+    var modal = document.getElementById('adddeptform');
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("adddept");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal 
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+  </script>
+ -->
+
+
 {% endif %}
 
 {% endblock %}

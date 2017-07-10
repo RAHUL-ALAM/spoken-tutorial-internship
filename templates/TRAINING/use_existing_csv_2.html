@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+
+<style type="text/css">
+	#choose-csv{
+    background-color: #E5E1E0;
+	width: 70%;
+	margin: 4% auto;
+    padding: 2%;
+	}
+	#choose-csv-form{
+		/*background-color: #E5E1E0;*/
+		width: 100%;
+		margin: 0 auto;
+		padding: 2%;
+	}
+</style>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css"/>
+
+
+<div id="choose-csv">
+<form id="choose-csv-form" class="form-horizontal" method="post" action="/training/planner/training-request/use-existing-csv/final-step/">
+{% csrf_token %}
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="dept">Depertment:</label>
+    <div class="col-sm-9">
+      <input class="form-control" type="text" name="dept" value="{{dept}}" readonly>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="start-date">Start Date:</label>
+    <div class="col-sm-9"> 
+      <input class="form-control" type="date" name="date" value="{{date}}" readonly>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="foss">Foss:</label>
+    <div class="col-sm-9"> 
+      <input class="form-control" type="text" name="foss" value="{{foss}}" readonly>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="foss">Choose Participants:</label>
+    <div class="col-sm-9"> 
+      <!-- <select id="participants" name="participants[]" class="form-control" multiple>
+      <option value="">Select CSV</option>
+      <option value="0">
+      	csv_id ---- depertment ---- foss ---- date
+	  </option>
+	  {% for participant in participants %}
+	  	<option value="{{participant.id}}">
+	  		{{participant.id}} ---- {{csv.training.depertment}} ---- {{csv.training.foss}} ---- {{csv.training.start_date}}
+	  	</option>
+	  {%endfor%}
+  	</select> -->
+    {{form.participants}}
+    {{form.participants.errors}}
+    </div>
+  </div>
+  <div class="form-group"> 
+	<div class="col-sm-offset-3 col-sm-9">
+	  <button type="submit" class="btn btn-primary" style="width: 100%;"> submit </button>
+	</div>
+	</div>
+</form>
+</div>
+
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#participants').multiselect({
+        	buttonWidth: '100%',
+        	maxHeight: 200,
+        	Placeholder: 'Select Department...',
+        	filterPlaceholder: 'Search Department...',
+        	includeSelectAllOption: true,
+        	enableCaseInsensitiveFiltering: true,
+        });
+    });
+
+
+    var newoptionsdata = ""
+    {% for i in participants %}
+      newoptionsdata += "<option value='{{i.id}}'>{{i.user.first_name}} {{i.user.last_name}}</option>"
+    {% endfor %}
+    $('#participants').html(newoptionsdata);
+
+</script>
+
+{% endblock %}

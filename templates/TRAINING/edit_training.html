@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style type="text/css">
+	#div-for-edit-training-form{
+		width: 70%;
+		margin: 6% auto;
+	}
+	#edit-training-form{
+		background-color: #E5E1E0;
+		width: 70%;
+		margin: 1% auto;
+		padding: 2%;
+	}
+</style>
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" type="text/css"/>
+
+<div id="div-for-edit-training-form">
+<form id="edit-training-form" class="form-horizontal" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+	<div class="form-group">
+    <label class="control-label col-sm-3" for="dept">Depertment:</label>
+    <div class="col-sm-9">
+      {{form.dept}}
+      {{form.dept.errors}}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="start-date">Start Date:</label>
+    <div class="col-sm-9"> 
+      {{form.start_date}}
+      {{form.start_date.errors}}
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-3" for="foss">Foss:</label>
+    <div class="col-sm-9"> 
+      {{form.foss}}
+      {{form.foss.errors}}
+    </div>
+  </div>
+  <div class="form-group"> 
+    <div class="col-sm-offset-3 col-sm-9">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+</form>
+</div>
+
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#dept').multiselect({
+        	buttonWidth: '100%',
+        	maxHeight: 200,
+        	Placeholder: 'Select Department...',
+        	filterPlaceholder: 'Search Department...',
+        	includeSelectAllOption: true,
+        	enableCaseInsensitiveFiltering: true,
+        });
+    });
+    $(document).ready(function() {
+        $('#foss').multiselect({
+        	buttonWidth: '100%',
+        	maxHeight: 200,
+        	filterPlaceholder: 'Search Foss...',
+        	includeSelectAllOption: true,
+        	enableCaseInsensitiveFiltering: true,
+        });
+    });
+
+
+
+    var newoptionsdata = ""
+    {% for i in all_dept %}
+	{% if i.dept.id == current_dept.id %}
+    	newoptionsdata += "<option value='{{i.dept.id}}' selected>{{i.dept.name}}</option>"
+    {% else %}
+    	newoptionsdata += "<option value='{{i.dept.id}}'>{{i.dept.name}}</option>"
+    {% endif %}
+    {% endfor %}
+    $('#dept').html(newoptionsdata);
+
+    document.getElementById("start-date").defaultValue="{{current_date}}"
+
+    $("#foss").children().remove("optgroup[label='---Select Foss---']");
+    $("#foss option").filter(function() {
+        return $(this).attr('value') == "{{current_foss.id}}";
+    }).attr('selected', true);
+
+
+
+    document.getElementById('edit-training-form').onsubmit = function() {
+      var dept = document.getElementById('dept').options[document.getElementById('dept').selectedIndex].value;
+      if(dept=='-'){
+        alert('Select a Department');
+        return false;
+      }
+
+      var foss = document.getElementById('foss').options[document.getElementById('foss').selectedIndex].value;
+      if(foss=='0'){
+        alert('Select a Foss');
+        return false;
+      }
+    }
+
+</script>
+
+
+
+{% endblock %}

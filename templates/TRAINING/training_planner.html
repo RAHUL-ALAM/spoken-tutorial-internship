@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h3 style="padding: 1% 3%;"><i class="home-page-title-i">Training Planner Summary</i></h3>
+<a href="/training-dashboard/" style="position: absolute; right: 60px; top: 80px;"> 
+<button class="btn btn-primary">Dashboard</button>
+</a>
+
+{% if messages %}
+{% for message in messages %}
+<div style="width: 70%; margin: 0 auto; text-align: center; margin-top: 2%; ">
+<div class="alert alert-success alert-dismissable fade in">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Success!</strong> {{message}}
+</div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div style="width: 80%; margin: 2% auto; box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+  <div>
+      <p style="font-size: 18px; font-weight: 500;"> Trainings you created  </p>
+  </div>
+	<table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Training Started</th>
+        <th>Foss</th>
+        <th>Depertment</th>
+        <th>Participants</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in trainings %}
+      <tr>
+        <td>{{i.start_date}}</td>
+        <td>{{i.foss.name}}</td>
+        <td>{{i.depertment}}</td>
+        <td><a href="/training/planner/participant-list/{{i.csv.id}}/">Participant List</a></td>
+        <td>
+            <a href="/training/planner/delete-training/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="delete"  onclick="onDelete()"><i class="fa fa-times text-danger" aria-hidden="true" style="font-size: 130%;"></i></a>&nbsp
+            <a href="/training/planner/edit-training/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="edit"><i class="fa fa-edit" aria-hidden="true" style="color: gray; font-size: 130%;"></i></a>
+            <a href="/training/planner/add-participant/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="add articipant"><i class="fa fa-plus" aria-hidden="true" style="color:#229ED8;font-size: 130%;"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  	</table>
+</div>
+
+
+{% if trainings_handedover %}
+<div style="width: 80%; margin: 2% auto; box-shadow: 1px 1px 4px #888888; padding: 3% 2%;">
+  <div>
+      <p style="font-size: 18px; font-weight: 500;"> Trainings handed over to you  </p>
+  </div>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Training Started</th>
+        <th>Foss</th>
+        <th>Depertment</th>
+        <th>Participants</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for i in trainings_handedover %}
+      <tr>
+        <td>{{i.start_date}}</td>
+        <td>{{i.foss.name}}</td>
+        <td>{{i.depertment}}</td>
+        <td><a href="/training/planner/participant-list/{{i.csv.id}}/">Participant List</a></td>
+        <td>
+            <a href="/training/planner/delete-training/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="delete"  onclick="onDelete()"><i class="fa fa-times text-danger" aria-hidden="true" style="font-size: 130%;"></i></a>&nbsp
+            <a href="/training/planner/edit-training/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="edit"><i class="fa fa-edit" aria-hidden="true" style="color: gray; font-size: 130%;"></i></a>
+            <a href="/training/planner/add-participant/{{i.id}}/" data-toggle="tooltip" data-placement="auto" title="add articipant"><i class="fa fa-plus" aria-hidden="true" style="color:#229ED8;font-size: 130%;"></i></a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+</div>
+{% endif %}
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip(); 
+});
+
+function onDelete() {
+  if (!confirm('Delete this training?')) {
+    event.preventDefault();
+  }
+}
+</script>
+
+{% endblock %}

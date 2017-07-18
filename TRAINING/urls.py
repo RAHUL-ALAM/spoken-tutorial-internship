@@ -12,4 +12,7 @@ urlpatterns = [
 	url(r'^planner/delete-training/(?P<training_id>[0-9]+)/$', views.delete_training),
 	url(r'^planner/edit-training/(?P<training_id>[0-9]+)/$', views.edit_training),
 	url(r'^planner/add-participant/(?P<training_id>[0-9]+)/$', views.add_participants),
+	url(r'^student-dashboard/$', views.student_dashboard),
+	url(r'^student-dashboard/edit-profile/$', views.edit_profile_by_student),
+	url(r'^student-dashboard/edit-academic-info/$', views.edit_academic_info_by_student),
 ]

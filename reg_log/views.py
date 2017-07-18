@@ -140,7 +140,7 @@ def request_for_organiser(request):
 		d.org = request.user
 		d.dept = Depertment.objects.get(id=int(request.POST['dept']))
 		d.college = c.collage
-		d,status = False
+		d.status = False
 		d.save()
 		return redirect(training_dashboard)
 	

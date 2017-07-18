@@ -125,8 +125,12 @@
                     <div class="panel-heading panel-heading-notif">Join with Us</div>
                     <div class="panel-body">
                         <ul>
+
+                            {% if organiser == 4 %}
+                                <li> Your organiser role request is sent for approval </li>
+                            {% endif %}
                             {% if organiser == 3 %}
-                                <li><a href="/#/"> Apply again to be a organiser </a></li>
+                                <li><a href="/request-for-organiser/"> Apply again to be a organiser </a></li>
                             {% endif %}
                             {% if organiser == 2 %}
                                 <li>Organiser role request rejected | <a href="/request-for-organiser/">request again </a></li>

@@ -3,8 +3,8 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
-from reg_log.models import organiser, userprofile, OrganiserHandover
-from .models import DeptOrg, MasterBatch, CSV_list, Student, Training, Depertment, Foss, DeptStudent
+from reg_log.models import organiser, userprofile, OrganiserHandover, college
+from .models import DeptOrg, MasterBatch, CSV_list, Student, Training, Depertment, Foss, StudentLog
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from .forms import Training_Request_Form, add_participants_form, edit_training_form, edit_student_form
@@ -15,6 +15,7 @@ import simplejson
 import csv
 import os
 import random
+from datetime import datetime
 
 
 # this view is for training planner
@@ -176,9 +177,12 @@ def create_student(row, user, csv_object, dept):
 	student_object.status = True
 	student_object.save()
 	student_object.csv.add(csv_object)
-	d = DeptStudent()
+
+	d = StudentLog()
 	d.student = student_object
+	d.college = csv_object.masterbatch.college
 	d.depertment = dept
+	d.is_active = True
 	d.save()
 
 
@@ -488,46 +492,113 @@ def edit_student(request, csv_id, student_id):
 	if request.method=="POST":
 		if form.is_valid():
 			user_to_change = User.objects.get(id=student.user.id)
+			user_to_change.first_name = form.cleaned_data['first_name']
+			user_to_change.last_name = form.cleaned_data['last_name']
+			user_to_change_profile = userprofile.objects.get(user=student.user)
+			user_to_change_profile.gender = form.cleaned_data['gender']
+
 			if form.cleaned_data['email'] != user_to_change.email:
 				if(email_validate(form.cleaned_data['email'])):
 					# checks if new email already exist is database or not
 					if not User.objects.filter(email=form.cleaned_data['email']).exists():
-						user_to_change.first_name = form.cleaned_data['first_name']
-						user_to_change.last_name = form.cleaned_data['last_name']
 						user_to_change.email = form.cleaned_data['email']
 						user_to_change.save()
-						user_to_change_profile = userprofile.objects.get(user=student.user)
-						user_to_change_profile.gender = form.cleaned_data['gender']
 						user_to_change_profile.save()
 
-						depertment = Depertment.objects.get(id=int(form.cleaned_data['dept']))
-						deptstudent_instance = DeptStudent.objects.get(student=student)
-						deptstudent_instance.depertment = depertment
-						deptstudent_instance.save()
-
-						return redirect(training_participant_list, csv_id)
 					else:
 						context['err1'] = "This email already exists"
 				else:
 					context['err2']= "This email is invalid"
 
-			else:
-				user_to_change.first_name = form.cleaned_data['first_name']
-				user_to_change.last_name = form.cleaned_data['last_name']
-				user_to_change.save()
-				user_to_change_profile = userprofile.objects.get(user=student.user)
-				user_to_change_profile.gender = form.cleaned_data['gender']
-				user_to_change_profile.save()
+			changed_dept = Depertment.objects.get(id=int(form.cleaned_data['dept']))
+			studentlog_instance = StudentLog.objects.get(student=student, is_active=True)
+			current_dept = studentlog_instance.depertment
 
-				depertment = Depertment.objects.get(id=int(form.cleaned_data['dept']))
-				deptstudent_instance = DeptStudent.objects.get(student=student)
-				deptstudent_instance.depertment = depertment
-				deptstudent_instance.save()
+			if current_dept != changed_dept:
+				studentlog_instance.is_active = False
+				studentlog_instance.save()
+				s = StudentLog()
+				s.student = student
+				s.depertment = changed_dept
+				s.college = studentlog_instance.college
+				s.is_active = True
+				s.save()
 
-				return redirect(training_participant_list, csv_id)
+			return redirect(training_participant_list, csv_id)
 
 	student.gender = userprofile.objects.get(user=student.user).gender
-	student.dept = DeptStudent.objects.get(student=student).depertment
+	student.dept = StudentLog.objects.get(student=student, is_active=True).depertment
 	context['form']=form
 	context['student']=student
 	return render(request,'TRAINING/edit_student.html',context)
+
+
+def student_dashboard(request):
+	if Student.objects.filter(user=request.user).exists():
+		context = {}
+		context['current'] = []
+		context['upcoming'] = []
+
+		student = Student.objects.get(user=request.user)
+		context['student'] = student
+
+		trainings = Training.objects.all()
+		for training in trainings:
+			if training.csv in student.csv.all():
+				current_date = datetime.date(datetime.now())
+				if current_date<training.start_date:
+					context['upcoming'].append(training)
+				elif current_date >= training.start_date:
+					context['current'].append(training)
+
+		context['current_clg'] = StudentLog.objects.get(student=student, is_active=True)
+		context['past_clg'] = StudentLog.objects.filter(student=student, is_active=False)
+
+		context['colleges'] = college.objects.all()
+		context['departments'] = Depertment.objects.all()
+
+		return render(request, 'TRAINING/student_dashboard.html', context)
+
+
+
+
+def edit_profile_by_student(request):
+	if request.method == "POST":
+		user_to_change = User.objects.get(id=request.user.id)
+		user_to_change.first_name = request.POST['fname']
+		user_to_change.last_name = request.POST['lname']
+
+		if request.POST['email'] != user_to_change.email:
+			if(email_validate(request.POST['email'])):
+				# checks if new email already exist is database or not
+				if not User.objects.filter(email=request.POST['email']).exists():
+					user_to_change.email = request.POST['email']
+				else:
+					context['err1'] = "This email already exists"
+			else:
+				context['err2']= "This email is invalid"
+					
+		user_to_change.save()
+
+		return redirect(student_dashboard)
+
+
+
+
+def edit_academic_info_by_student(request):
+	if request.method == "POST":
+		student = Student.objects.get(user=request.user)
+		studentlog_to_change = StudentLog.objects.get(student=student, is_active=True)
+		studentlog_to_change.is_active = False
+		studentlog_to_change.save()
+
+		new_studentlog_object = StudentLog()
+		new_studentlog_object.student = student
+		new_studentlog_object.college = college.objects.get(id=int(request.POST['clg']))
+		new_studentlog_object.depertment = Depertment.objects.get(id=request.POST['dept'])
+		new_studentlog_object.is_active = True
+		new_studentlog_object.save()
+
+		return redirect(student_dashboard)
+
+

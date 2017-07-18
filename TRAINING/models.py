@@ -38,9 +38,11 @@ class Student(models.Model):
 	def __str__(self):
 		return str(self.user.first_name)+'-'+str(self.user.last_name)
 
-class DeptStudent(models.Model):
+class StudentLog(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
+	college = models.ForeignKey(college, on_delete=models.CASCADE)
 	depertment = models.ForeignKey(Depertment, on_delete=models.CASCADE)
+	is_active = models.BooleanField(default=False)
 
 	def __str__(self):
 		return str(self.student.user.first_name)+'-'+str(self.student.user.last_name)+'-'+str(self.depertment.name)

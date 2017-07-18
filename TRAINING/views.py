@@ -533,6 +533,7 @@ def edit_student(request, csv_id, student_id):
 	return render(request,'TRAINING/edit_student.html',context)
 
 
+@login_required(login_url='/login/')
 def student_dashboard(request):
 	if Student.objects.filter(user=request.user).exists():
 		context = {}

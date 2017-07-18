@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from .forms import userRegForm, userExtendeForm, logForm, addorgForm, addInstiForm, OrgDeptForm
-from TRAINING.models import DeptOrg, Depertment, MasterBatch, Training
+from TRAINING.models import DeptOrg, Depertment, MasterBatch, Training, Student
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .models import userprofile, organiser, college, state, district, city, OrganiserHandover
@@ -20,6 +20,7 @@ def home(request):
 	context = { }
 	if request.user.is_authenticated():
 		context['user'] = request.user
+		context['student'] = Student.objects.filter(user=request.user).exists()
 	return render(request, 'reg_log/home.html', context)
 
 
@@ -121,6 +122,8 @@ def training_dashboard(request):
 
 	else:
 		context['organiser']=0         # not requested for organiser
+
+	context['student'] = Student.objects.filter(user=request.user).exists()
 
 	return render(request,'reg_log/training_dashboard.html', context)
 
